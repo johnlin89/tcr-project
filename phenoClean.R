@@ -10,13 +10,14 @@ require(RCurl)
 # TODO: Need to store on the biolync server with RCurl
 tcrEmrPheno <- read.delim(
   "/Users/linjo/Box\ Sync/MIPs/Immunoseq_EHR_2019-02-15_for_BOX.txt", 
-  sep = "\t", strip.white = TRUE)
+  sep = "\t", strip.white = TRUE, stringsAsFactors = FALSE)
 # Create FIID and IID columns
 tcrEmrPheno$FID <- paste(substring(tcrEmrPheno$MIPs.ID, 0, 4), 
                          substring(tcrEmrPheno$MIPs.ID, 10, 13), sep = "")
 tcrEmrPheno$IID <- paste(substring(tcrEmrPheno$MIPs.ID, 0, 4), 
                          substring(tcrEmrPheno$MIPs.ID, 10, 13), sep = "")
-tcrEmrPheno <- tcrEmrPheno[, c(47:48, 1:46)]
+# Rearrange so that FID, IID, and prod clon are first
+tcrEmrPheno <- select(tcrEmrPheno, FID, IID, Productive.Clonality, everything())
 # Replace unwanted characters
 tcrEmrPheno <- data.frame(lapply(tcrEmrPheno, function(x) {
   gsub(" ", "_", x)
@@ -27,10 +28,8 @@ tcrEmrPheno <- data.frame(lapply(tcrEmrPheno, function(x) {
 tcrEmrPheno <- data.frame(lapply(tcrEmrPheno, function(x) {
   gsub("%", "", x)
 }))
-# Rearrange so that FIID and IID are first
-tcrEmrPheno <- select(tcrEmrPheno, FID, IID, everything())
 # Output for plink
 # TODO: Need to store on the biolync server with RCurl
 write_delim(tcrEmrPheno,
             path = "/Users/linjo/Box\ Sync/MIPs/tcrEmrPheno.txt",
-            delim = "\t", col_names = TRUE, quote_escape = FALSE)
+            delim = "\t", col_names = TRUE, quote_escape = FALSE, )
