@@ -10,6 +10,7 @@ require(qqman)
 
 # Read in linear regression results
 # TODO: use Rcurl to read this in from server
+# TODO: why is 10.3600 showing up as a value, it should be 0.2565
 plinkLinear <- read.table("/Users/linjo/Desktop/tcr-project-desktop/MIPS_Updated.2019-02-21/jxl2059/plinkResults/linearTest/MIPS_SexCorrected_Pheno_tcrb_linear.assoc.linear", header = TRUE)
 # Remove where snps with P values of NA
 plinkLinear <- na.omit(plinkLinear, col = "P")
@@ -79,5 +80,17 @@ for (i in 1:length(snpFiltered)) {
 by_snp <- group_by_(plinkPed, .dots = names(plinkPed)[-grep("FID|IID|phenotype", names(plinkPed))])
 by_snp_means <- summarise(by_snp, meanTcr = mean(phenotype, na.rm = TRUE))
 
-
+# Demonstration of single SNP test
+snp <- "rs6945601"
+plinkPedSingle = plinkPed[,c(snp,"phenotype")]
+lm.fit <- lm(phenotype ~ rs6945601, data = plinkPedSingle)
+jpeg("linearRegressionExample.jpg")
+ggplot(data = plinkPedSingle) + 
+  geom_point(mapping = aes(x = rs6945601, y = phenotype), color = "blue") +
+  geom_line(aes(x = rs6945601, y = predict(lm.fit)), color = "red") + 
+  xlab(paste("snp", snp)) + ylab("TCR Productive Clonality") +
+  ggtitle("SNP Genotype vs TCR Productive Clonality")
+dev.off()
+summary(lm.fit)
+plinkLinear[which(plinkLinear$SNP=="rs6945601"),]
 
