@@ -24,7 +24,7 @@ productive.TCR.nt <- productiveSeq(file.list = TCR.list,
 jpeg('lorenz1.jpg')
 lorenzCurve(samples = names(productive.TCR.nt), list = productive.TCR.nt)
 dev.off()
-jpeg('topSeq1.jpb')
+jpeg('topSeq1.jpg')
 topSeqsPlot(list = productive.TCR.nt, top = 10)
 dev.off()
 
