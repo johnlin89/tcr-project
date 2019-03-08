@@ -10,7 +10,7 @@ require(RCurl)
 # TODO: Need to store on the biolync server with RCurl
 tcrEmrPheno <- read.delim(
   "/Users/linjo/Box\ Sync/MIPs/Immunoseq_EHR_2019-02-15_for_BOX.txt", 
-  sep = "\t", strip.white = TRUE, stringsAsFactors = FALSE)
+  sep = "\t", strip.white = TRUE, stringsAsFactors = FALSE, na.strings = "")
 # Create FIID and IID columns
 tcrEmrPheno$FID <- paste(substring(tcrEmrPheno$MIPs.ID, 0, 4), 
                          substring(tcrEmrPheno$MIPs.ID, 10, 13), sep = "")
@@ -32,4 +32,4 @@ tcrEmrPheno <- data.frame(lapply(tcrEmrPheno, function(x) {
 # TODO: Need to store on the biolync server with RCurl
 write_delim(tcrEmrPheno,
             path = "/Users/linjo/Box\ Sync/MIPs/tcrEmrPheno.txt",
-            delim = "\t", col_names = TRUE, quote_escape = FALSE, )
+            delim = "\t", col_names = TRUE, quote_escape = FALSE, na = "missing")
