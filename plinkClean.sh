@@ -34,4 +34,4 @@ mkdir $outputFolder/plinkFiltering/plink4
 # expand window by 50000 bp on each side and do linear regressions
 rm -r $outputFolder/plinkFiltering/plink5
 mkdir $outputFolder/plinkFiltering/plink5
-/storage/software/plink --bfile /storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink3/prune --pheno ../tcrEmrPheno.txt --pheno-name Productive.Clonality --chr 7 --from-bp 141998851 --to-bp 142510972 --assoc --linear --make-bed --out $outputFolder/plinkFiltering/plink5/window --freq counts
+/storage/software/plink --bfile /storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink3/prune --pheno ../tcrEmrPheno.txt --pheno-name Productive.Clonality --chr 7 --from-bp 141948851 --to-bp 142560972 --assoc --linear --make-bed --out $outputFolder/plinkFiltering/plink5/window --freq counts
