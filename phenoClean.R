@@ -4,12 +4,16 @@
 
 require(tidyverse)
 require(RCurl)
+require(ssh)
+
+# Connect to biolync server
+session <- ssh_connect("jxl2059@biolync.case.edu")
 
 # Create phenotype file tcrEmrPheno.txt to input into plink
 # Read in all Phenotypes
 # TODO: Need to store on the biolync server with RCurl
 tcrEmrPheno <- read.delim(
-  "/Users/linjo/Box\ Sync/MIPs/Immunoseq_EHR_2019-02-15_for_BOX.txt", 
+  "/Users/linjo/Box/MIPs/Immunoseq_EHR_2019-02-15_for_BOX.txt", 
   sep = "\t", strip.white = TRUE, stringsAsFactors = FALSE, na.strings = "")
 # Create FIID and IID columns
 tcrEmrPheno$FID <- paste(substring(tcrEmrPheno$MIPs.ID, 0, 4), 
@@ -28,8 +32,20 @@ tcrEmrPheno <- data.frame(lapply(tcrEmrPheno, function(x) {
 tcrEmrPheno <- data.frame(lapply(tcrEmrPheno, function(x) {
   gsub("%", "", x)
 }))
+# Create density plots and histograms
+jpeg('histTcr.jpg')
+hist(as.numeric(as.character(tcrEmrPheno$Productive.Clonality)))
+dev.off()
+jpeg('densTcr.jpg')
+plot(density(as.numeric(as.character(tcrEmrPheno$Productive.Clonality))))
+dev.off()
 # Output for plink
 # TODO: Need to store on the biolync server with RCurl
 write_delim(tcrEmrPheno,
             path = "/Users/linjo/Box\ Sync/MIPs/tcrEmrPheno.txt",
             delim = "\t", col_names = TRUE, quote_escape = FALSE, na = "missing")
+scp_upload(session, path, to = "/storage/")
+
+# Disconnect session
+ssh_disconnect(session)
+
