@@ -35,3 +35,8 @@ mkdir $outputFolder/plinkFiltering/plink4
 rm -r $outputFolder/plinkFiltering/plink5
 mkdir $outputFolder/plinkFiltering/plink5
 /storage/software/plink --bfile /storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink3/prune --pheno ../tcrEmrPheno.txt --pheno-name Productive.Clonality --chr 7 --from-bp 141948851 --to-bp 142560972 --assoc --linear --make-bed --out $outputFolder/plinkFiltering/plink5/window --freq counts
+
+# see all of chr 7 
+rm -r $outputFolder/plinkFiltering/plink6
+mkdir $outputFolder/plinkFiltering/plink6
+/storage/software/plink --bfile /storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink3/prune --pheno ../tcrEmrPheno.txt --pheno-name Productive.Clonality --chr 7 --assoc --linear --make-bed --out $outputFolder/plinkFiltering/plink6/allChr7 --freq counts
