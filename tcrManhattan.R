@@ -7,17 +7,24 @@ require(RCurl)
 require(rtracklayer)
 require(pheatmap)
 require(qqman)
+require(ssh)
+
+# Connect to biolync server
+session <- ssh_connect("jxl2059@biolync.case.edu")
 
 # Read in linear regression results
 # TODO: use Rcurl to read this in from server
 # TODO: why is 10.3600 showing up as a value, it should be 0.2565
-plinkLinear <- read.table("/Users/linjo/Desktop/tcr-project-desktop/MIPS_Updated.2019-02-21/jxl2059/plinkResults/linearTest/MIPS_SexCorrected_Pheno_tcrb_linear.assoc.linear", header = TRUE)
+plinkLinear <- scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults//plinkFiltering/plink5/window.assoc.linear", to = "/Users/linjo/Desktop/tcr-project-desktop")
+plinkLinear <- read.table("/Users/linjo/Desktop/tcr-project-desktop/window.assoc.linear", header = TRUE)
 # Remove where snps with P values of NA
 plinkLinear <- na.omit(plinkLinear, col = "P")
+#Adjust p-values
+# p.adjust(plinkLinear$P, method = "bonferroni")
 # Generate and save Manhattan plot
 # TODO: use Rcurl to read this in from server
 jpeg('manhattan1.jpg')
-manhattan(plinkLinear, ylim = c(0, 40), annotatePval = 0.05)
+manhattan(plinkLinear, annotatePval = 0.05, xlim = c(141948851, 142560972))
 dev.off()
 # Generate and save qq plot
 # TODO: use Rcurl to read this in from server
@@ -57,7 +64,7 @@ plinkPed$phenotype <- plinkFam$phenotype
 plinkPed <- plinkPed[which(plinkPed$IID %in% tcrEmrPheno$IID),]
 
 # Read in productive clonality means associated with each haplotype
-plinkPcMeans <- read.table("/Users/linjo/Desktop/tcr-project-desktop/MIPS_Updated.2019-02-21/jxl2059/plinkResults/linearTest/MIPS_SexCorrected_Pheno_tcrb_linear.qassoc.means", 
+plinkPcMeans <- read.table("/Users/linjo/Desktop/tcr-project-desktop/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink1.qassoc.means", 
                            header = TRUE)
 # Filter plinkPed for relevant snps
 # Only grab where counts are 5 for each category
@@ -92,5 +99,7 @@ ggplot(data = plinkPedSingle) +
   ggtitle("SNP Genotype vs TCR Productive Clonality")
 dev.off()
 summary(lm.fit)
-plinkLinear[which(plinkLinear$SNP=="rs6945601"),]
+plinkLinear[which(plinkLinear$SNP == "rs6945601"), ]
 
+# Disconnect session
+ssh_disconnect(session)
