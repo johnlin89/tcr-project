@@ -14,7 +14,6 @@ session <- ssh_connect("jxl2059@biolync.case.edu")
 
 # Read in linear regression results
 # TODO: use Rcurl to read this in from server
-# TODO: why is 10.3600 showing up as a value, it should be 0.2565
 plinkLinear <- scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults//plinkFiltering/plink5/window.assoc.linear", to = "/Users/linjo/Desktop/tcr-project-desktop")
 plinkLinear <- read.table("/Users/linjo/Desktop/tcr-project-desktop/window.assoc.linear", header = TRUE)
 # Remove where snps with P values of NA
