@@ -36,7 +36,12 @@ rm -r $outputFolder/plinkFiltering/plink5
 mkdir $outputFolder/plinkFiltering/plink5
 /storage/software/plink --bfile /storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink3/prune --pheno ../tcrEmrPheno.txt --pheno-name Productive.Clonality --chr 7 --from-bp 141948851 --to-bp 142560972 --assoc --linear --make-bed --out $outputFolder/plinkFiltering/plink5/window --freq counts
 
-# see all of chr 7 
+# see all of chr 7 with pruned individuals, and MAF and HWE Filtering
 rm -r $outputFolder/plinkFiltering/plink6
 mkdir $outputFolder/plinkFiltering/plink6
-/storage/software/plink --bfile /storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink3/prune --pheno ../tcrEmrPheno.txt --pheno-name Productive.Clonality --chr 7 --assoc --linear --make-bed --out $outputFolder/plinkFiltering/plink6/allChr7 --freq counts
+/storage/software/plink --bfile /storage/mips/MIPS_Updated.2019-02-21/data/MIPS_SexCorrected --pheno ../tcrEmrPheno.txt --pheno-name Productive.Clonality --chr 7 --maf 0.1 --hwe 0.0001 --assoc --linear --make-bed --out $outputFolder/plinkFiltering/plink6/allChr7 --freq counts --prune
+
+# add in covariates, building off  of code for plink5
+rm -r $outputFolder/plinkFiltering/plink7
+mkdir $outputFolder/plinkFiltering/plink7
+/storage/software/plink --bfile /storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink3/prune --pheno ../tcrEmrPheno.txt --pheno-name Productive.Clonality --chr 7 --from-bp 141948851 --to-bp 142560972 --linear --covar tcrEmrPheno.txt --covar-name Gender,Age --make-bed --out $outputFolder/plinkFiltering/plink7/windowCovar --freq counts
