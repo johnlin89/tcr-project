@@ -23,12 +23,12 @@ plinkLinear <- na.omit(plinkLinear, col = "P")
 # p.adjust(plinkLinear$P, method = "bonferroni")
 # Generate and save Manhattan plot
 # TODO: use Rcurl to read this in from server
-jpeg('manhattan1.jpg')
-manhattan(plinkLinear, annotatePval = 0.05, xlim = c(141948851, 142560972))
+jpeg('manhattan2.jpg')
+manhattan(plinkLinear, xlim = c(141948851, 142560972))
 dev.off()
 # Generate and save qq plot
 # TODO: use Rcurl to read this in from server
-jpeg('qqplot1.jpg')
+jpeg('qqplot2.jpg')
 qq(plinkLinear$P)
 dev.off()
 
