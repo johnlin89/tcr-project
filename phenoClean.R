@@ -39,6 +39,10 @@ colnames(tcrEmrPheno)[which(colnames(tcrEmrPheno) == "Age")] = "AGE"
 tcrEmrPheno$SEX = as.character(tcrEmrPheno$SEX)
 tcrEmrPheno$SEX[which(tcrEmrPheno$SEX == "M")] = 1
 tcrEmrPheno$SEX[which(tcrEmrPheno$SEX == "F")] = 2
+# Filter for columns of interest
+tcrEmrPheno <- select(tcrEmrPheno, FID, IID, Productive.Clonality, SEX, AGE)
+
+# Data Visualizaiton and EDA
 # Create density plots and histograms
 jpeg('histTcr.jpg')
 hist(as.numeric(as.character(tcrEmrPheno$Productive.Clonality)))
