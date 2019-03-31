@@ -35,6 +35,10 @@ tcrEmrPheno <- data.frame(lapply(tcrEmrPheno, function(x) {
 # Rename Gender to SEX and Age to AGE
 colnames(tcrEmrPheno)[which(colnames(tcrEmrPheno) == "Gender")] = "SEX"
 colnames(tcrEmrPheno)[which(colnames(tcrEmrPheno) == "Age")] = "AGE"
+# Record SEX Coded 1/2/0 for M/F/missing per PLINK
+tcrEmrPheno$SEX = as.character(tcrEmrPheno$SEX)
+tcrEmrPheno$SEX[which(tcrEmrPheno$SEX == "M")] = 1
+tcrEmrPheno$SEX[which(tcrEmrPheno$SEX == "F")] = 2
 # Create density plots and histograms
 jpeg('histTcr.jpg')
 hist(as.numeric(as.character(tcrEmrPheno$Productive.Clonality)))
@@ -48,7 +52,7 @@ scp_upload(session, 'histTcr.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/j
 write_delim(tcrEmrPheno,
             path = "/Users/linjo/Desktop/tcr-project-desktop/tcrEmrPheno.txt",
             delim = "\t", col_names = TRUE, quote_escape = FALSE, na = "missing")
-scp_upload(session, path, to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/phenotypes")
+scp_upload(session, files = "/Users/linjo/Desktop/tcr-project-desktop/tcrEmrPheno.txt", to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/phenotypes")
 
 # Disconnect session
 ssh_disconnect(session)
