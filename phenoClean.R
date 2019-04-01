@@ -11,9 +11,9 @@ session <- ssh_connect("jxl2059@biolync.case.edu")
 
 # Create phenotype file tcrEmrPheno.txt to input into plink
 # Read in all Phenotypes
-scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/phenotypes/Immunoseq_EHR_2019-02-15_for_BOX.txt", to = "/Users/linjo/Desktop/tcr-project-desktop")
+scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/phenotypes/Immunoseq_EHR_2019-02-15_for_BOX.txt", to = "/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data")
 tcrEmrPheno <- read.delim(
-  "/Users/linjo/Desktop/tcr-project-desktop/Immunoseq_EHR_2019-02-15_for_BOX.txt", 
+  "/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data/Immunoseq_EHR_2019-02-15_for_BOX.txt", 
   sep = "\t", strip.white = TRUE, stringsAsFactors = FALSE, na.strings = "")
 # Create FID and IID columns
 tcrEmrPheno$FID <- paste(substring(tcrEmrPheno$MIPs.ID, 0, 4), 
