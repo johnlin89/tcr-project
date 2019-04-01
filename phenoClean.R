@@ -44,10 +44,10 @@ tcrEmrPheno$SEX[which(tcrEmrPheno$SEX == "F")] = 2
 
 # Data Visualization and EDA
 # Create density plots and histograms
-jpeg('histTcr.jpg')
+jpeg('figures/histTcr.jpg')
 hist(as.numeric(as.character(tcrEmrPheno$Productive.Clonality)))
 dev.off()
-jpeg('densTcr.jpg')
+jpeg('figures/densTcr.jpg')
 plot(density(as.numeric(as.character(tcrEmrPheno$Productive.Clonality))))
 dev.off()
 
