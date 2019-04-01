@@ -13,20 +13,42 @@ require(ssh)
 session <- ssh_connect("jxl2059@biolync.case.edu")
 
 # Demonstration of single SNP test
+# Read in  plink5 results
+plinkBed <- scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink5/window.bed", to = "/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data")
+plinkBim <- scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink5/window.bim", to = "/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data")
+plinkFam <- scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink5/window.fam", to = "/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data")
+plinkRead <- read.bed("/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data/window.bed", "/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data/window.bim", "/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data/window.fam", 
+                      only.snp = FALSE)
+
+# Creating separate data frames from bed object
+plinkPed <- plinkRead$snp
+plinkPed <- as.data.frame(plinkPed)
+plinkMap <- plinkRead$snp.info
+plinkFam <- plinkRead$ind.info
+
+# Add SNP column names to plinkPed
+# TODO: Verify order of snps from plinkMap can be transposed
+colnames(plinkPed) <- plinkMap$ID
+# Substitute commas for pipes in column names of snps
+colnames(plinkPed)[grep(",", colnames(plinkPed))] <- 
+  gsub(",","|",colnames(plinkPed)[grep(",", colnames(plinkPed))])
+# Add phenotype column
+plinkPed$phenotype <- plinkFam$phenotype
+
 
 # Perform linear regression for 1 SNP
-snp <- "rs11768792"
+snp <- "rs1052406"
 plinkPedSingle <- plinkPed[, c(snp,"phenotype")]
-lm.fit <- lm(phenotype ~ rs11768792, data = plinkPedSingle)
-jpeg("linearRegressionExample.jpg")
+lm.fit <- lm(phenotype ~ rs1052406, data = plinkPedSingle)
+jpeg("figures/linearRegressionExample.jpg")
 ggplot(data = plinkPedSingle) + 
-  geom_point(mapping = aes(x = rs11768792, y = phenotype), color = "blue") +
-  geom_line(aes(x = rs11768792, y = predict(lm.fit)), color = "red") + 
+  geom_point(mapping = aes(x = rs1052406, y = phenotype), color = "blue") +
+  geom_line(aes(x = rs1052406, y = predict(lm.fit)), color = "red") + 
   xlab(paste("snp", snp)) + ylab("TCR Productive Clonality") +
   ggtitle("SNP Genotype vs TCR Productive Clonality")
 dev.off()
 summary(lm.fit)
-plinkLinear[which(plinkLinear$SNP == "rs11768792"), ]
+plinkLinear[which(plinkLinear$SNP == "rs1052406"), ]
 
 
 # Zoomed manhattan with 50,000 bp window on each side
