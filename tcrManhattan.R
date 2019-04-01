@@ -40,7 +40,7 @@ plinkLinear <- na.omit(plinkLinear, col = "P")
 # Generate and save Manhattan plot
 jpeg('figures/manhattanZoomed.jpg')
 # coordinates for expanded window are 141948851, 142560972
-manhattan(plinkLinear, xlim = c(141900000, 142660000), 
+manhattan(plinkLinear, xlim = c(141948851, 142560972), 
           suggestiveline = -log10(0.05), annotatePval = 0.05,
           highlight = as.character(plinkLinear$SNP[which(plinkLinear$P < 0.05)]))
 dev.off()
