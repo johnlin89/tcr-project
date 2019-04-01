@@ -11,11 +11,11 @@ session <- ssh_connect("jxl2059@biolync.case.edu")
 
 # Create phenotype file tcrEmrPheno.txt to input into plink
 # Read in all Phenotypes
-# TODO: Need to store on the biolync server with RCurl
+scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/phenotypes/Immunoseq_EHR_2019-02-15_for_BOX.txt", to = "/Users/linjo/Desktop/tcr-project-desktop")
 tcrEmrPheno <- read.delim(
-  "/Users/linjo/Box/MIPs/Immunoseq_EHR_2019-02-15_for_BOX.txt", 
+  "/Users/linjo/Desktop/tcr-project-desktop/Immunoseq_EHR_2019-02-15_for_BOX.txt", 
   sep = "\t", strip.white = TRUE, stringsAsFactors = FALSE, na.strings = "")
-# Create FIID and IID columns
+# Create FID and IID columns
 tcrEmrPheno$FID <- paste(substring(tcrEmrPheno$MIPs.ID, 0, 4), 
                          substring(tcrEmrPheno$MIPs.ID, 10, 13), sep = "")
 tcrEmrPheno$IID <- paste(substring(tcrEmrPheno$MIPs.ID, 0, 4), 
@@ -32,19 +32,32 @@ tcrEmrPheno <- data.frame(lapply(tcrEmrPheno, function(x) {
 tcrEmrPheno <- data.frame(lapply(tcrEmrPheno, function(x) {
   gsub("%", "", x)
 }))
+# Rename Gender to SEX and Age to AGE
+colnames(tcrEmrPheno)[which(colnames(tcrEmrPheno) == "Gender")] = "SEX"
+colnames(tcrEmrPheno)[which(colnames(tcrEmrPheno) == "Age")] = "AGE"
+# Record SEX Coded 1/2/0 for M/F/missing per PLINK
+tcrEmrPheno$SEX = as.character(tcrEmrPheno$SEX)
+tcrEmrPheno$SEX[which(tcrEmrPheno$SEX == "M")] = 1
+tcrEmrPheno$SEX[which(tcrEmrPheno$SEX == "F")] = 2
+# Filter for columns of interest
+# tcrEmrPheno <- select(tcrEmrPheno, FID, IID, Productive.Clonality, SEX, AGE)
+
+# Data Visualization and EDA
 # Create density plots and histograms
-jpeg('histTcr.jpg')
+jpeg('figures/histTcr.jpg')
 hist(as.numeric(as.character(tcrEmrPheno$Productive.Clonality)))
 dev.off()
-jpeg('densTcr.jpg')
+jpeg('figures/densTcr.jpg')
 plot(density(as.numeric(as.character(tcrEmrPheno$Productive.Clonality))))
 dev.off()
-# Output for plink
-# TODO: Need to store on the biolync server with RCurl
+
+# Output for plink and store on biolync
+scp_upload(session, 'figures/densTcr.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
+scp_upload(session, 'figures/histTcr.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
 write_delim(tcrEmrPheno,
-            path = "/Users/linjo/Box\ Sync/MIPs/tcrEmrPheno.txt",
+            path = "/Users/linjo/Desktop/tcr-project-desktop/tcrEmrPheno.txt",
             delim = "\t", col_names = TRUE, quote_escape = FALSE, na = "missing")
-scp_upload(session, path, to = "/storage/")
+scp_upload(session, files = "/Users/linjo/Desktop/tcr-project-desktop/tcrEmrPheno.txt", to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/phenotypes")
 
 # Disconnect session
 ssh_disconnect(session)

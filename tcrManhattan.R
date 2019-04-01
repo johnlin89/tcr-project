@@ -12,44 +12,120 @@ require(ssh)
 # Connect to biolync server
 session <- ssh_connect("jxl2059@biolync.case.edu")
 
-# Zoomed manhattan
+# Demonstration of single SNP test
+# Read in  plink5 results
+plinkBed <- scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink5/window.bed", to = "/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data")
+plinkBim <- scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink5/window.bim", to = "/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data")
+plinkFam <- scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink5/window.fam", to = "/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data")
+plinkRead <- read.bed("/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data/window.bed", "/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data/window.bim", "/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data/window.fam", 
+                      only.snp = FALSE)
+
+# Creating separate data frames from bed object
+plinkPed <- plinkRead$snp
+plinkPed <- as.data.frame(plinkPed)
+plinkMap <- plinkRead$snp.info
+plinkFam <- plinkRead$ind.info
+
+# Add SNP column names to plinkPed
+# TODO: Verify order of snps from plinkMap can be transposed
+colnames(plinkPed) <- plinkMap$ID
+# Substitute commas for pipes in column names of snps
+colnames(plinkPed)[grep(",", colnames(plinkPed))] <- 
+  gsub(",","|",colnames(plinkPed)[grep(",", colnames(plinkPed))])
+# Add phenotype column
+plinkPed$phenotype <- plinkFam$phenotype
+
+
+# Perform linear regression for 1 SNP
+snp <- "rs1052406"
+plinkPedSingle <- plinkPed[, c(snp,"phenotype")]
+lm.fit <- lm(phenotype ~ rs1052406, data = plinkPedSingle)
+jpeg("figures/linearRegressionExample.jpg")
+ggplot(data = plinkPedSingle) + 
+  geom_point(mapping = aes(x = rs1052406, y = phenotype), color = "blue") +
+  geom_line(aes(x = rs1052406, y = predict(lm.fit)), color = "red") + 
+  xlab(paste("snp", snp)) + ylab("TCR Productive Clonality") +
+  ggtitle("SNP Genotype vs TCR Productive Clonality")
+dev.off()
+summary(lm.fit)
+plinkLinear[which(plinkLinear$SNP == "rs1052406"), ]
+
+
+# Zoomed manhattan with 50,000 bp window on each side
 # Read in linear regression results
-plinkLinear <- scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults//plinkFiltering/plink5/window.assoc.linear", to = "/Users/linjo/Desktop/tcr-project-desktop")
-plinkLinear <- read.table("/Users/linjo/Desktop/tcr-project-desktop/window.assoc.linear", header = TRUE)
+plinkLinear <- scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink5/window.assoc.linear", to = "/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data")
+plinkLinear <- read.table("/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data/window.assoc.linear", header = TRUE)
 # Remove where snps with P values of NA
 plinkLinear <- na.omit(plinkLinear, col = "P")
-#A djust p-values
+# Adjust p-values
 # p.adjust(plinkLinear$P, method = "bonferroni")
 # Generate and save Manhattan plot
-jpeg('manhattanZoomed.jpg')
-manhattan(plinkLinear, xlim = c(141948851, 142560972))
+jpeg('figures/manhattanZoomed.jpg')
+# coordinates for expanded window are 141948851, 142560972
+manhattan(plinkLinear, xlim = c(141948851, 142560972), 
+          suggestiveline = -log10(0.05), annotatePval = 0.05,
+          highlight = as.character(plinkLinear$SNP[which(plinkLinear$P < 0.05)]))
 dev.off()
+
+# Print significant snps
+print("These SNPs appear to be significant...")
+plinkLinear[which(plinkLinear$P < 0.05),]
+
 # Generate and save qq plot
-jpeg('qqplotZoomed.jpg')
+jpeg('figures/qqplotZoomed.jpg')
 qq(plinkLinear$P)
 dev.off()
 # Save plots to biolync server
-scp_upload(session, 'manhattanZoomed.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
-scp_upload(session, 'qqplotZoomed.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
+scp_upload(session, 'figures/manhattanZoomed.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
+scp_upload(session, 'figures/qqplotZoomed.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
 
 # All of chr 7 manhattan
-plinkLinearAll <- scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults//plinkFiltering/plink6/allChr7.assoc.linear", to = "/Users/linjo/Desktop/tcr-project-desktop")
-plinkLinearAll <- read.table("/Users/linjo/Desktop/tcr-project-desktop/allChr7.assoc.linear", header = TRUE)
+plinkLinearAll <- scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink6/allChr7.assoc.linear", to = "/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data")
+plinkLinearAll <- read.table("/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data/allChr7.assoc.linear", header = TRUE)
 # Remove where snps with P values of NA
 plinkLinearAll <- na.omit(plinkLinearAll, col = "P")
 #Adjust p-values
 # p.adjust(plinkLinear$P, method = "bonferroni")
 # Generate and save Manhattan plot
-jpeg('manhattanAll.jpg')
-manhattan(plinkLinearAll)
+jpeg('figures/manhattanAll.jpg')
+manhattan(plinkLinearAll, suggestiveline = -log10(0.05))
 dev.off()
 # Generate and save qq plot
-jpeg('qqplotAll.jpg')
+jpeg('figures/qqplotAll.jpg')
 qq(plinkLinearAll$P)
 dev.off()
 # Save plots to biolync server
-scp_upload(session, 'manhattanAll.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
-scp_upload(session, 'qqplotAll.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
+scp_upload(session, 'figures/manhattanAll.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
+scp_upload(session, 'figures/qqplotAll.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
+
+# Adding in covariates for age and gender
+plinkLinearCovar <- scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink7/windowCovar.assoc.linear", to = "/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data")
+plinkLinearCovar <- read.table("/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data/windowCovar.assoc.linear", header = TRUE)
+# Remove where snps with P values of NA
+plinkLinearCovar <- na.omit(plinkLinearCovar, col = "P")
+# Remove P-values not associated with SNPs
+plinkLinearCovar <- plinkLinearCovar[which(plinkLinearCovar$TEST == "ADD"),]
+# Adjust p-values
+# p.adjust(plinkLinear$P, method = "bonferroni")
+# Generate and save Manhattan plot
+jpeg('figures/manhattanCovar.jpg')
+manhattan(plinkLinearCovar, xlim = c(141948851, 142560972), 
+          suggestiveline = -log10(0.05), annotatePval = 0.05,
+          highlight = as.character(plinkLinearCovar$SNP[which(plinkLinearCovar$P < 0.05)]))
+dev.off()
+
+# Print significant snps
+print("These SNPs appear to be significant...")
+plinkLinearCovar[which(plinkLinearCovar$P < 0.05),]
+
+# Generate and save qq plot
+jpeg('figures/qqplotCovar.jpg')
+qq(plinkLinearCovar$P)
+dev.off()
+# Save plots to biolync server
+scp_upload(session, 'figures/manhattanCovar.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
+scp_upload(session, 'figures/qqplotCovar.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
+
 
 # Disconnect session
 ssh_disconnect(session)
@@ -110,8 +186,8 @@ by_snp <- group_by_(plinkPed, .dots = names(plinkPed)[-grep("FID|IID|phenotype",
 by_snp_means <- summarise(by_snp, meanTcr = mean(phenotype, na.rm = TRUE))
 
 # Demonstration of single SNP test
-snp <- "rs6945601"
-plinkPedSingle = plinkPed[,c(snp,"phenotype")]
+snp <- "rs11768792"
+plinkPedSingle <- plinkPed[, c(snp,"phenotype")]
 lm.fit <- lm(phenotype ~ rs6945601, data = plinkPedSingle)
 jpeg("linearRegressionExample.jpg")
 ggplot(data = plinkPedSingle) + 
