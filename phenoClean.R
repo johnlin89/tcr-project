@@ -52,8 +52,8 @@ plot(density(as.numeric(as.character(tcrEmrPheno$Productive.Clonality))))
 dev.off()
 
 # Output for plink and store on biolync
-scp_upload(session, 'densTcr.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
-scp_upload(session, 'histTcr.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
+scp_upload(session, 'figures/densTcr.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
+scp_upload(session, 'figures/histTcr.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
 write_delim(tcrEmrPheno,
             path = "/Users/linjo/Desktop/tcr-project-desktop/tcrEmrPheno.txt",
             delim = "\t", col_names = TRUE, quote_escape = FALSE, na = "missing")
