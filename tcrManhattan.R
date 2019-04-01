@@ -14,7 +14,45 @@ session <- ssh_connect("jxl2059@biolync.case.edu")
 
 # Zoomed manhattan
 # Read in linear regression results
-plinkLinear <- scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults//plinkFiltering/plink5/window.assoc.linear", to = "/Users/linjo/Desktop/tcr-project-desktop")
+plinkLinear <- scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink5/window.assoc.linear", to = "/Users/linjo/Desktop/tcr-project-desktop")
+plinkLinear <- read.table("/Users/linjo/Desktop/tcr-project-desktop/window.assoc.linear", header = TRUE)
+# Remove where snps with P values of NA
+plinkLinear <- na.omit(plinkLinear, col = "P")
+# Adjust p-values
+# p.adjust(plinkLinear$P, method = "bonferroni")
+# Generate and save Manhattan plot
+jpeg('figures/manhattanZoomed.jpg')
+manhattan(plinkLinear, xlim = c(141948851, 142560972))
+dev.off()
+# Generate and save qq plot
+jpeg('figures/qqplotZoomed.jpg')
+qq(plinkLinear$P)
+dev.off()
+# Save plots to biolync server
+scp_upload(session, 'manhattanZoomed.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
+scp_upload(session, 'qqplotZoomed.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
+
+# All of chr 7 manhattan
+plinkLinearAll <- scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults//plinkFiltering/plink6/allChr7.assoc.linear", to = "/Users/linjo/Desktop/tcr-project-desktop")
+plinkLinearAll <- read.table("/Users/linjo/Desktop/tcr-project-desktop/allChr7.assoc.linear", header = TRUE)
+# Remove where snps with P values of NA
+plinkLinearAll <- na.omit(plinkLinearAll, col = "P")
+#Adjust p-values
+# p.adjust(plinkLinear$P, method = "bonferroni")
+# Generate and save Manhattan plot
+jpeg('figures/manhattanAll.jpg')
+manhattan(plinkLinearAll)
+dev.off()
+# Generate and save qq plot
+jpeg('figures/qqplotAll.jpg')
+qq(plinkLinearAll$P)
+dev.off()
+# Save plots to biolync server
+scp_upload(session, 'manhattanAll.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
+scp_upload(session, 'qqplotAll.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
+
+# Adding in covariates for age and gender
+plinkLinearCovar <- scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults//plinkFiltering/plink7/windowCovar.assoc.linear", to = "/Users/linjo/Desktop/tcr-project-desktop")
 plinkLinear <- read.table("/Users/linjo/Desktop/tcr-project-desktop/window.assoc.linear", header = TRUE)
 # Remove where snps with P values of NA
 plinkLinear <- na.omit(plinkLinear, col = "P")
@@ -32,24 +70,6 @@ dev.off()
 scp_upload(session, 'manhattanZoomed.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
 scp_upload(session, 'qqplotZoomed.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
 
-# All of chr 7 manhattan
-plinkLinearAll <- scp_download(session, "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults//plinkFiltering/plink6/allChr7.assoc.linear", to = "/Users/linjo/Desktop/tcr-project-desktop")
-plinkLinearAll <- read.table("/Users/linjo/Desktop/tcr-project-desktop/allChr7.assoc.linear", header = TRUE)
-# Remove where snps with P values of NA
-plinkLinearAll <- na.omit(plinkLinearAll, col = "P")
-#Adjust p-values
-# p.adjust(plinkLinear$P, method = "bonferroni")
-# Generate and save Manhattan plot
-jpeg('manhattanAll.jpg')
-manhattan(plinkLinearAll)
-dev.off()
-# Generate and save qq plot
-jpeg('qqplotAll.jpg')
-qq(plinkLinearAll$P)
-dev.off()
-# Save plots to biolync server
-scp_upload(session, 'manhattanAll.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
-scp_upload(session, 'qqplotAll.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
 
 # Disconnect session
 ssh_disconnect(session)
