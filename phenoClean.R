@@ -42,7 +42,7 @@ tcrEmrPheno$SEX[which(tcrEmrPheno$SEX == "F")] = 2
 # Filter for columns of interest
 # tcrEmrPheno <- select(tcrEmrPheno, FID, IID, Productive.Clonality, SEX, AGE)
 
-# Data Visualizaiton and EDA
+# Data Visualization and EDA
 # Create density plots and histograms
 jpeg('histTcr.jpg')
 hist(as.numeric(as.character(tcrEmrPheno$Productive.Clonality)))
@@ -50,6 +50,7 @@ dev.off()
 jpeg('densTcr.jpg')
 plot(density(as.numeric(as.character(tcrEmrPheno$Productive.Clonality))))
 dev.off()
+
 # Output for plink and store on biolync
 scp_upload(session, 'densTcr.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
 scp_upload(session, 'histTcr.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
