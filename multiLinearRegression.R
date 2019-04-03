@@ -5,6 +5,7 @@
 require(tidyverse)
 require(ssh)
 require(glmnet)
+require(KRIS)
 
 # Connect to biolync server
 session <- ssh_connect("jxl2059@biolync.case.edu")
@@ -60,7 +61,7 @@ plinkPedJoin$SEX <- as.factor(plinkPedJoin$SEX)
 
 # Perform multivariate linear regression with ridge regression vs lasso
 # Generate observation, obs, and response, resp, matrices
-obs <- select(plinkPedJoin, -FID, -IID, -phenotype)
+obs <- select(plinkPedJoin, -FID, -IID, -phenotype, -AGE, -SEX)
 # Filter out columns where there are NA values
 which(colSums(is.na(obs)) != 0)
 # these ones are removed JHU_7.142361724, rs151232837, rs6947539 
@@ -76,6 +77,9 @@ ridge.fit <- glmnet(obs, resp, alpha = 0, lambda = grid)
 summary(ridge.fit)
 # see coefficients with given lambda
 # coef(ridge.fit)[,100]
+jpeg('figures/ridgeCoeff1.jpeg')
+plot(ridge.fit, label = TRUE)
+dev.off()
 set.seed(1)
 # LOOCV since nfolds = number of observations
 cv.ridge <- cv.glmnet(obs, resp, alpha = 0, nfolds = 15, grouped = FALSE)
@@ -92,6 +96,9 @@ lasso.fit <- glmnet(obs, resp, alpha = 1, lambda = grid)
 summary(lasso.fit)
 # see coefficients with given lambda
 # coef(lasso.fit)[,100]
+jpeg('figures/lassoCoeff1.jpeg')
+plot(lasso.fit, label = TRUE)
+dev.off()
 set.seed(1)
 # LOOCV since nfolds = number of observations
 cv.lasso <- cv.glmnet(obs, resp, alpha = 1, nfolds = 15, grouped = FALSE)
