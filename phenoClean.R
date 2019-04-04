@@ -45,10 +45,16 @@ tcrEmrPheno$SEX[which(tcrEmrPheno$SEX == "F")] = 2
 # Data Visualization and EDA
 # Create density plots and histograms
 jpeg('figures/histTcr.jpg')
-hist(as.numeric(as.character(tcrEmrPheno$Productive.Clonality)))
+hist(as.numeric(as.character(tcrEmrPheno$Productive.Clonality)), 
+     main = "Histogram Distribution of Productive Clonality (n = 15)",
+     xlab = "Productive Clonality",
+     ylab = "Number of individuals")
 dev.off()
 jpeg('figures/densTcr.jpg')
-plot(density(as.numeric(as.character(tcrEmrPheno$Productive.Clonality))))
+plot(density(as.numeric(as.character(tcrEmrPheno$Productive.Clonality))),
+     main = "Density Plot of Productive Clonality (n = 15)",
+     xlab = "Productive Clonality",
+     ylab = "Number of individuals")
 dev.off()
 
 # Output for plink and store on biolync
