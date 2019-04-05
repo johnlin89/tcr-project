@@ -7,7 +7,7 @@ require(RCurl)
 require(ssh)
 
 # Connect to biolync server
-session <- ssh_connect("jxl2059@biolync.case.edu")
+session  <- ssh_connect("jxl2059@biolync.case.edu")
 
 # Create phenotype file tcrEmrPheno.txt to input into plink
 # Read in all Phenotypes
@@ -56,10 +56,21 @@ plot(density(as.numeric(as.character(tcrEmrPheno$Productive.Clonality))),
      xlab = "Productive Clonality",
      ylab = "Number of individuals")
 dev.off()
+jpeg('figures/boxTcr.jpg')
+boxplot(as.numeric(as.character(tcrEmrPheno$Productive.Clonality)),
+        horizontal = TRUE, xlab = "Productive Clonality", 
+        main = "Box Plot of Productive Clonality")
+dev.off()
+
+# Descriptive Statistics
+summary(as.numeric(as.character(tcrEmrPheno$Productive.Clonality)))
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 0.0151  0.0600  0.0884  0.1030  0.1487  0.2565 
 
 # Output for plink and store on biolync
 scp_upload(session, 'figures/densTcr.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
 scp_upload(session, 'figures/histTcr.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
+scp_upload(session, 'figures/boxTcr.jpg', to = "/storage/mips/MIPS_Updated.2019-02-21/jxl2059/figures")
 write_delim(tcrEmrPheno,
             path = "/Users/linjo/Desktop/tcr-project-desktop/tcrEmrPheno.txt",
             delim = "\t", col_names = TRUE, quote_escape = FALSE, na = "missing")
