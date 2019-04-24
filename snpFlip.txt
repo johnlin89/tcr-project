@@ -1,5 +1,8 @@
-snpflip -f ./human_g1k_v37.fasta -b ./plink7/windowCovar.bim -o ./snpFlipResults/windowCovar_flip
+cd tcr-project-desktop
 
-plink --bfile ./plink7/windowCovar --flip ./snpFlipResults/windowCovar_flip.reverse --make-bed --out ./snpFlipResults/windowCovar_flip
+# processing for 129 samples on chr 1-22
+snpflip -f ./human_g1k_v37.fasta -b ./plink8/allWindow.bim -o ./snpFlipResults/allWindow_flip
 
-plink --bfile ./snpFlipResults/windowCovar_flip --flip-scan --out ./snpFlipResults/windowCovar_flip
+scp allWindow_flip.annotated* jxl2059@biolync.case.edu:/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink8snpFlip/
+scp allWindow_flip.ambiguous* jxl2059@biolync.case.edu:/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink8snpFlip/
+scp allWindow_flip.reverse* jxl2059@biolync.case.edu:/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults/plinkFiltering/plink8snpFlip/
