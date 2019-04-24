@@ -1,0 +1,5 @@
+snpflip -f ./human_g1k_v37.fasta -b ./plink7/windowCovar.bim -o ./snpFlipResults/windowCovar_flip
+
+plink --bfile ./plink7/windowCovar --flip ./snpFlipResults/windowCovar_flip.reverse --make-bed --out ./snpFlipResults/windowCovar_flip
+
+plink --bfile ./snpFlipResults/windowCovar_flip --flip-scan --out ./snpFlipResults/windowCovar_flip
