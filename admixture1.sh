@@ -8,4 +8,4 @@
 # K = 6 shows lowest error
 outputFolder="/storage/mips/MIPS_Updated.2019-02-21/jxl2059/plinkResults"
 
-/storage/software/admixture_linux-1.3.0/admixture $outputFolder
+/storage/software/admixture_linux-1.3.0/admixture $outputFolder/plink13/allWindowNoDup_flipRef4
