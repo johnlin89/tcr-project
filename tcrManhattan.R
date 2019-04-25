@@ -70,6 +70,8 @@ dev.off()
 # Print significant snps
 print("These SNPs appear to be significant...")
 plinkLinear[which(plinkLinear$P < 0.05),]
+# rs1052406
+# rs1009848
 
 # Generate and save qq plot
 jpeg('figures/qqplotZoomed.jpg')
