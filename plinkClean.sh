@@ -94,11 +94,19 @@ mkdir $outputFolder/plinkFiltering/plink9
 # /storage/software/plink -bfile $outputFolder/plinkFiltering/plink9/allWindowNoDup_flip --exclude $outputFolder/plinkFiltering/plink10/allWindowNoDup_flipRef-merge.missnp --make-bed --out $outputFolder/plinkFiltering/plink11/allWindowNoDup_flipRef2
 
 # biallelic
-rm -r $outputFolder/plinkFiltering/plink12
-mkdir $outputFolder/plinkFiltering/plink12
-/storage/software/plink -bfile $outputFolder/plinkFiltering/plink11/allWindowNoDup_flipRef2 --biallelic-only strict -make-bed --out $outputFolder/plinkFiltering/plink12/allWindowNoDup_flipRef3
+# rm -r $outputFolder/plinkFiltering/plink12
+# mkdir $outputFolder/plinkFiltering/plink12
+# /storage/software/plink -bfile $outputFolder/plinkFiltering/plink11/allWindowNoDup_flipRef2 --biallelic-only strict -make-bed --out $outputFolder/plinkFiltering/plink12/allWindowNoDup_flipRef3
 
 # try merge again
-rm -r $outputFolder/plinkFiltering/plink13
-mkdir $outputFolder/plinkFiltering/plink13
-/storage/software/plink -bfile $outputFolder/plinkFiltering/plink12/allWindowNoDup_flipRef3 -bmerge $referenceFolder/CEU-YRI_unrelFinal2 --snps-only 'just-acgt' -make-bed --out $outputFolder/plinkFiltering/plink13/allWindowNoDup_flipRef4
+# rm -r $outputFolder/plinkFiltering/plink13
+# mkdir $outputFolder/plinkFiltering/plink13
+# /storage/software/plink -bfile $outputFolder/plinkFiltering/plink12/allWindowNoDup_flipRef3 -bmerge $referenceFolder/CEU-YRI_unrelFinal2 --snps-only 'just-acgt' -make-bed --out $outputFolder/plinkFiltering/plink13/allWindowNoDup_flipRef4
+
+# missing genotypes, ld pruning, and MAF
+# rm -r $outputFolder/plinkFiltering/plink14
+# mkdir $outputFolder/plinkFiltering/plink14
+# /storage/software/plink -bfile $outputFolder/plinkFiltering/plink13/allWindowNoDup_flipRef4 --maf 0.05 --geno 0.02 --indep-pairwise 50 10 0.1 --make-bed --out $outputFolder/plinkFiltering/plink14/allWindowNoDup_flipRef5
+
+mkdir $outputFolder/plinkFiltering/plink15
+/storage/software/plink -bfile $outputFolder/plinkFiltering/plink14/allWindowNoDup_flipRef5 --exclude  $outputFolder/plinkFiltering/plink14/allWindowNoDup_flipRef5.prune.out --make-bed --out $outputFolder/plinkFiltering/plink15/allWindowNoDup_flipRefPruned
