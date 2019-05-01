@@ -58,6 +58,8 @@ plinkPedJoin$SEX[which(plinkPedJoin$SEX == 1)] = 1
 # Females are 0
 plinkPedJoin$SEX[which(plinkPedJoin$SEX == 2)] = 0
 plinkPedJoin$SEX <- as.factor(plinkPedJoin$SEX)
+save(plinkPedJoin, file = "/Users/linjo/GoogleDrive/CaseWesternUniversity/tcr-project/data/plinkPedJoin")
+
 
 # Perform multivariate linear regression with ridge regression vs lasso
 # Generate observation, obs, and response, resp, matrices
