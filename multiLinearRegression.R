@@ -92,6 +92,20 @@ bestLambda <-  cv.ridge$lambda.min
 bestLambda
 # 29.68392
 predict(ridge.fit, type = "coefficients", s = bestLambda)
+# Evaluation
+ridge.fit.best <- glmnet(obs, resp, alpha = 0, lambda = bestLambda)
+# MSE
+ridge.fit.pred <- predict(ridge.fit ,s = bestLambda, newx = obs)
+mean((ridge.fit.pred - resp)^2)
+# [1] 0.004025158
+# AIC
+tLL <- ridge.fit.best$nulldev - deviance(ridge.fit.best)
+k <- ridge.fit.best$df
+n <- ridge.fit.best$nobs
+AICc <- -tLL + 2 * k + 2 * k * (k + 1) / (n - k - 1)
+AICc
+# -32.96004
+
 
 # Lasso, alpha = 1
 lasso.fit <- glmnet(obs, resp, alpha = 1, lambda = grid)
@@ -113,6 +127,18 @@ bestLambda
 predict(lasso.fit, type = "coefficients", s = bestLambda)
 # rs1052406       -0.002969940
 # rs1009848        0.002077136
-
+lasso.fit.best <- glmnet(obs, resp, alpha = 1, lambda = bestLambda)
+# Evaluation
+# MSE
+lasso.pred <- predict(lasso.fit ,s = bestLambda, newx = obs)
+mean((lasso.pred - resp)^2)
+# [1] 0.003959658
+# AIC
+tLL <- lasso.fit.best$nulldev - deviance(lasso.fit.best)
+k <- lasso.fit.best$df
+n <- lasso.fit.best$nobs
+AICc <- -tLL + 2 * k + 2 * k * (k + 1) / (n - k - 1)
+AICc
+# 0
 
 

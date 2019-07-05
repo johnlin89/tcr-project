@@ -54,10 +54,10 @@ admixture2 <- admixture2[order(admixture2$CEU), ]
 admixture2 <- admixture2[-grep("NA", admixture2$IID), ]
 # Create column to see if results agree with self reported race
 admixture2$raceTest = NA
-admixture2$raceTest[which(admixture2$CEU < admixture2$YRI & 
+admixture2$raceTest[which(admixture2$YRI >= 0.10 & 
                             admixture2$Race == "African American")] = 1
-admixture2$raceTest[which(admixture2$CEU < admixture2$YRI & 
-                            admixture2$Race == "European American")] = 0
+admixture2$raceTest[which(admixture2$CEU >= 0.90 &
+                            admixture2$Race == "European American")] = 1
 jpeg('figures/admixture2.jpg')
 barplot(t(as.matrix(select(admixture2, CEU, YRI))), col = rainbow(3), 
         xlab = "Individuals", ylab = "Ancestry", border = NA, axisnames = FALSE, 
